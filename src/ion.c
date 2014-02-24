@@ -113,7 +113,7 @@ state_number(ion_private_t *ion, ion_char_t value) {
 
 static ion_result_t
 state_quote(ion_private_t *ion, ion_char_t value) {
-    ion_result_t result = ION_ERROR;
+    ion_result_t result = ION_NONE;
 
     if (value == ']' && --(*ion->stack) == 0) {
         ion->header.state = ION_STATE_START;
@@ -121,10 +121,6 @@ state_quote(ion_private_t *ion, ion_char_t value) {
     }
     else if (value == '[') {
         (*ion->stack)++;
-        result = ION_NONE;
-    }
-    else {
-        result = ION_NONE;
     }
 
     return result;
