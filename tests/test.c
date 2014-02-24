@@ -47,6 +47,20 @@ main(void) {
     assert(ion_step(ion, '2') == ION_NONE);
     assert(ion_step(ion, '_') == ION_ERROR);
 
+    ion_init(ion, sizeof(ion));
+    assert(ion_step(ion, '[') == ION_NONE);
+    assert(ion_step(ion, '2') == ION_NONE);
+    assert(ion_step(ion, ']') == ION_QUOTE);
+
+    ion_init(ion, sizeof(ion));
+    assert(ion_step(ion, '[') == ION_NONE);
+    assert(ion_step(ion, '1') == ION_NONE);
+    assert(ion_step(ion, '[') == ION_NONE);
+    assert(ion_step(ion, '2') == ION_NONE);
+    assert(ion_step(ion, ']') == ION_NONE);
+    assert(ion_step(ion, '3') == ION_NONE);
+    assert(ion_step(ion, ']') == ION_QUOTE);
+
     return 0;
 }
 

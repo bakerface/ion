@@ -42,11 +42,11 @@
     case '7':   \
     case '8':   \
     case '9'
-    
 
 enum ion_state {
     ION_STATE_START,
-    ION_STATE_NUMBER
+    ION_STATE_NUMBER,
+    ION_STATE_QUOTE
 };
 
 typedef unsigned char ion_state_t;
@@ -74,6 +74,12 @@ state_start(ion_private_t *ion, ion_char_t value) {
 
         case DIGIT:
             ion->header.state = ION_STATE_NUMBER;
+            result = ION_NONE;
+            break;
+
+        case '[':
+            *ion->stack = 1;
+            ion->header.state = ION_STATE_QUOTE;
             result = ION_NONE;
             break;
 
@@ -105,6 +111,25 @@ state_number(ion_private_t *ion, ion_char_t value) {
     return result;
 }
 
+static ion_result_t
+state_quote(ion_private_t *ion, ion_char_t value) {
+    ion_result_t result = ION_ERROR;
+
+    if (value == ']' && --(*ion->stack) == 0) {
+        ion->header.state = ION_STATE_START;
+        result = ION_QUOTE;
+    }
+    else if (value == '[') {
+        (*ion->stack)++;
+        result = ION_NONE;
+    }
+    else {
+        result = ION_NONE;
+    }
+
+    return result;
+}
+
 void
 ion_init(ion_t *ion, ion_size_t size) {
     ion_private_t *private = ion_private(ion);
@@ -114,7 +139,8 @@ ion_init(ion_t *ion, ion_size_t size) {
 
 static const ion_function_t state_machine[] = {
     state_start,
-    state_number
+    state_number,
+    state_quote
 };
 
 ion_result_t

@@ -31,7 +31,8 @@ extern "C" {
 enum ion_result {
     ION_NONE,
     ION_ERROR,
-    ION_NUMBER
+    ION_NUMBER,
+    ION_QUOTE
 };
 
 typedef char ion_char_t;
