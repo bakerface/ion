@@ -28,6 +28,9 @@
 extern "C" {
 #endif /* __cplusplus */
 
+#define ION_VERSION_MAJOR 0
+#define ION_VERSION_MINOR 1
+
 enum ion_result {
     ION_NONE,
     ION_ERROR,
