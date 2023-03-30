@@ -15,8 +15,13 @@ env.Append(CCFLAGS='-fno-exceptions')
 env.Append(CCFLAGS='-fno-rtti')
 env.Append(LINKFLAGS='--coverage')
 
-env.Clean('test', 'tests/test.gcno')
-env.Clean('test', 'tests/test.gcda')
+env.Clean('coverage', [
+  'coverage',
+  'coverage.cov',
+  'src',
+  'test',
+  'tests'
+])
 
 program = env.Program('test', [
   'tests/test.c',
@@ -24,17 +29,16 @@ program = env.Program('test', [
 ])
 
 test = Command(
-  target = '',
-  source = program[0].abspath,
-  action = './$SOURCE'
+  target = 'test.gcda',
+  source = 'test',
+  action = program[0].abspath
 )
 
 Depends(test, program)
 
-
 lcov = Command(
   target = 'coverage.cov',
-  source = '',
+  source = 'test.gcda',
   action = 'lcov -b . -d . -c -o $TARGET'
 )
 
