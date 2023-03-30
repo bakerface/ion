@@ -1,0 +1,51 @@
+Import([ 'build' ])
+
+env = Environment()
+env.Append(CPPPATH='include')
+env.Append(CCFLAGS='-ansi')
+env.Append(CCFLAGS='-pedantic')
+env.Append(CCFLAGS='-pedantic-errors')
+env.Append(CCFLAGS='-Wall')
+env.Append(CCFLAGS='-Werror')
+env.Append(CCFLAGS='-Wextra')
+env.Append(CCFLAGS='-O0')
+env.Append(CCFLAGS='-fprofile-arcs')
+env.Append(CCFLAGS='-ftest-coverage')
+env.Append(CCFLAGS='-fno-exceptions')
+env.Append(CCFLAGS='-fno-rtti')
+env.Append(LINKFLAGS='--coverage')
+
+env.Clean('test', 'tests/test.gcno')
+env.Clean('test', 'tests/test.gcda')
+
+program = env.Program('test', [
+  'tests/test.c',
+  'src/ion.c'
+])
+
+test = Command(
+  target = '',
+  source = program[0].abspath,
+  action = './$SOURCE'
+)
+
+Depends(test, program)
+
+
+lcov = Command(
+  target = 'coverage.cov',
+  source = '',
+  action = 'lcov -b . -d . -c -o $TARGET'
+)
+
+Depends(lcov, test)
+
+genhtml = Command(
+  target = 'coverage',
+  source = 'coverage.cov',
+  action = 'genhtml -o $TARGET $SOURCE'
+)
+
+Depends(genhtml, lcov)
+
+env.Default(genhtml)
